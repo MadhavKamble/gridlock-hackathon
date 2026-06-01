@@ -1,0 +1,51 @@
+Index,geohash,day,timestamp,RoadType,NumberofLanes,LargeVehicles,Landmarks,Temperature,Weather
+0,qp02z1,49,2:15,,1,Not Allowed,No,,
+1,qp02z9,49,2:15,Residential,1,Not Allowed,No,6.476213455442872,Snowy
+2,qp02yf,49,2:15,Residential,3,Allowed,Yes,22.31820257526677,Sunny
+3,qp02z6,49,2:15,Residential,2,Not Allowed,Yes,,Rainy
+4,qp02zd,49,2:15,Residential,1,Not Allowed,No,18.26616222688751,Foggy
+5,qp02zf,49,2:15,Residential,3,Allowed,Yes,8.942256336709507,Rainy
+6,qp08b6,49,2:15,Residential,2,Not Allowed,Yes,21.698032145877587,Sunny
+7,qp02ze,49,2:15,Residential,2,Not Allowed,Yes,27.495912426530733,Sunny
+8,qp08b7,49,2:15,Residential,1,Not Allowed,No,19.555319042610783,Sunny
+9,qp02zs,49,2:15,Residential,3,Allowed,Yes,20.397601078257832,Sunny
+10,qp02zu,49,2:15,Residential,3,Allowed,Yes,13.895097443383456,Rainy
+11,qp08bh,49,2:15,Street,1,Not Allowed,Yes,23.159617759208555,Sunny
+12,qp08bk,49,2:15,Street,1,Not Allowed,Yes,22.927888022343136,Sunny
+13,qp08ck,49,2:15,Residential,3,Allowed,Yes,16.422567115259692,Foggy
+14,qp02zj,49,2:15,Residential,3,Allowed,Yes,17.172011009211047,Foggy
+15,qp02zm,49,2:15,Residential,3,Allowed,Yes,-1.1437077561983848,Snowy
+16,qp02zt,49,2:15,Residential,1,Not Allowed,No,6.775186661433304,Snowy
+17,qp02zv,49,2:15,Residential,2,Not Allowed,Yes,21.20016323063121,Sunny
+18,qp08bj,49,2:15,Residential,3,Allowed,Yes,23.230541235969845,Sunny
+19,qp08bm,49,2:15,Residential,2,Not Allowed,Yes,10.248469520001445,Rainy
+20,qp08fv,49,2:15,Residential,2,Not Allowed,Yes,32.08259189329184,Sunny
+21,qp08gm,49,2:15,Residential,1,Not Allowed,No,14.54729328023111,Foggy
+22,qp02zn,49,2:15,Residential,2,Not Allowed,Yes,12.303824343453822,Rainy
+23,qp02zq,49,2:15,Residential,2,Not Allowed,Yes,15.354794061534596,Foggy
+24,qp02zw,49,2:15,Highway,5,Allowed,No,19.03481973699612,Sunny
+25,qp02zy,49,2:15,Residential,2,Not Allowed,Yes,9.789071252549332,Rainy
+26,qp08bq,49,2:15,Residential,1,Not Allowed,No,20.41729837918868,Sunny
+27,qp08by,49,2:15,Residential,3,Allowed,Yes,15.700446546351646,Foggy
+28,qp08cn,49,2:15,Residential,2,Not Allowed,Yes,13.314789972596452,Rainy
+29,qp08cy,49,2:15,Residential,2,Not Allowed,Yes,33.53522751802049,Sunny
+30,qp08fy,49,2:15,Residential,3,Allowed,Yes,5.744481695999973,Snowy
+31,qp08gq,49,2:15,Residential,1,Not Allowed,No,,Foggy
+32,qp08gw,49,2:15,Residential,1,Not Allowed,No,10.832528319055204,Rainy
+33,qp02zp,49,2:15,Residential,1,Not Allowed,No,27.80734092059741,Sunny
+34,qp02zx,49,2:15,Street,1,Not Allowed,Yes,13.716972600305803,Rainy
+35,qp02zz,49,2:15,Highway,2,Allowed,No,27.506784413988107,Sunny
+36,qp08bp,49,2:15,Residential,1,Not Allowed,No,23.60049203050469,Sunny
+37,qp08br,49,2:15,Residential,1,Not Allowed,No,14.022099079481464,Foggy
+38,qp08bz,49,2:15,Residential,2,Not Allowed,Yes,19.944973038483887,Sunny
+39,qp08cp,49,2:15,Residential,3,Allowed,Yes,14.560611050549948,Foggy
+40,qp08fx,49,2:15,Residential,2,Not Allowed,Yes,21.963892813107776,Sunny
+41,qp08fz,49,2:15,Residential,3,Allowed,Yes,12.498203415442196,Rainy
+42,qp08gp,49,2:15,Residential,3,Allowed,Yes,7.229807025562604,Rainy
+43,qp08gr,49,2:15,Residential,3,Allowed,Yes,20.87346672917496,Sunny
+44,qp08gx,49,2:15,Residential,2,Not Allowed,Yes,18.13831477430331,Foggy
+45,qp08gz,49,2:15,Residential,3,Allowed,Yes,8.770869951961872,Rainy
+46,qp03nb,49,2:15,Residential,2,Not Allowed,Yes,28.613476393804508,Sunny
+47,qp03p2,49,2:15,Highway,2,Allowed,No,19.209501442037567,Sunny
+48,qp03p8,49,2:15,Residential,3,Allowed,Yes,10.06493467316226,Rainy
+49,qp03pb,49,2:15,Residential,1,Not Allowed,No,16.343141558267792,Foggy

@@ -1,0 +1,41 @@
+# Hackathon working files (kept locally, not for GitHub)
+hackathon submission/
+dataset/
+catboost_info/
+submissions/
+
+# Root-level scratch scripts
+/solution.ipynb
+/run_v4.py
+/quick_validate.py
+/problem statement.png
+ANALYSIS.md
+DEEP_DIVE.md
+IMPROVEMENTS.md
+PROGRESS.md
+RESEARCH.md
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Prediction & experiment artifacts
+*.npy
+*.npz
+submission_*.csv
+submission_blend_*.csv
+submission_weighted*.csv
+
+# Data files (full datasets are too large — samples are in data/)
+dataset/
+*.csv
+!results/best_submission.csv
+!data/sample_train.csv
+!data/sample_test.csv
+!data/sample_submission.csv
+
+# Logs
+logs/
+catboost_info/

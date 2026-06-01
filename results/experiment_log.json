@@ -1,0 +1,763 @@
+[
+  {
+    "timestamp": "2026-05-28 (pre-log)",
+    "oof_r2": null,
+    "competition_score": null,
+    "lb_score": 89.22061,
+    "n_imputations": 3,
+    "miga_fr_scores": null,
+    "miga_fr_mean": null,
+    "lgb_params": {
+      "num_leaves": 127,
+      "learning_rate": 0.02,
+      "n_estimators": 3000,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8
+    },
+    "fold_scores": null,
+    "features": [
+      "demand_lag",
+      "enc_gh_hr",
+      "enc_gh5_hr",
+      "enc_gh",
+      "enc_rt_hr",
+      "geohash",
+      "gh4",
+      "gh5",
+      "RoadType",
+      "LargeVehicles",
+      "Landmarks",
+      "Weather",
+      "day",
+      "hour",
+      "minute",
+      "hour_sin",
+      "hour_cos",
+      "day_sin",
+      "day_cos",
+      "NumberofLanes",
+      "Temperature",
+      "lat",
+      "lon"
+    ],
+    "notes": "Baseline \u2014 MIGA\u00d73 + LGB 5-fold. Features: demand_lag (day48), OOF geo\u00d7hour/gh5\u00d7hour/geohash/RoadType\u00d7hour. No geo_ts_mean, no lag features."
+  },
+  {
+    "timestamp": "2026-05-28",
+    "oof_r2": null,
+    "competition_score": null,
+    "lb_score": 82.85443,
+    "n_imputations": 3,
+    "miga_fr_scores": null,
+    "miga_fr_mean": null,
+    "lgb_params": {
+      "num_leaves": 255,
+      "learning_rate": 0.02,
+      "n_estimators": 3000,
+      "min_child_samples": 15,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8
+    },
+    "fold_scores": null,
+    "features": [
+      "demand_lag",
+      "enc_gh_hr",
+      "enc_gh5_hr",
+      "enc_gh",
+      "enc_rt_hr",
+      "geo_ts_mean (raw)",
+      "geo_ts_std",
+      "geo_ts_count",
+      "geo_mean",
+      "p5_mean",
+      "time_slot_mean",
+      "d48_ratio",
+      "demand_lag1",
+      "demand_lag2",
+      "demand_lag3",
+      "demand_roll3",
+      "demand_roll6"
+    ],
+    "notes": "REGRESSED \u2014 geo_ts_mean from all training data caused asymmetric leakage. Training: geo_ts_mean \u2248 (day48+day49)/2 \u2248 target. Test: geo_ts_mean = day48 only (test slots absent from day49 training) \u2192 model over-relied on leaky feature \u2192 collapsed. Reverted."
+  },
+  {
+    "timestamp": "2026-05-28 15:41",
+    "oof_r2": 0.954277,
+    "competition_score": 95.4277,
+    "lb_score": 89.87133,
+    "n_imputations": 3,
+    "miga_fr_scores": [
+      4.244765,
+      4.220424,
+      4.240581
+    ],
+    "miga_fr_mean": 4.235257,
+    "lgb_params": {
+      "num_leaves": 127,
+      "learning_rate": 0.02,
+      "n_estimators": 3000,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8
+    },
+    "fold_scores": [
+      0.9530302839899786,
+      0.9518415106923263,
+      0.9565703531376487,
+      0.9520757467555835,
+      0.9554409200956077
+    ],
+    "features": [
+      "demand_lag",
+      "enc_gh_hr",
+      "enc_gh5_hr",
+      "enc_gh",
+      "enc_rt_hr",
+      "enc_geo_ts",
+      "enc_gh5_ts",
+      "geohash",
+      "gh4",
+      "gh5",
+      "RoadType",
+      "LargeVehicles",
+      "Landmarks",
+      "Weather",
+      "day",
+      "hour",
+      "minute",
+      "hour_sin",
+      "hour_cos",
+      "day_sin",
+      "day_cos",
+      "NumberofLanes",
+      "Temperature",
+      "lat",
+      "lon",
+      "geo_day_trend"
+    ],
+    "notes": "OOF geo\u00d7time_slot + OOF gh5\u00d7time_slot (15-min granularity, smoothing=5) + day49 trend (geo_day_trend). Reverted leaky geo_ts_mean."
+  },
+  {
+    "timestamp": "2026-05-28 16:21",
+    "oof_r2": 0.955914,
+    "competition_score": 95.5914,
+    "lb_score": 91.19842,
+    "model": "LGB+CatBoost ensemble (no MIGA)",
+    "lgb_oof_r2": 0.92524,
+    "cat_oof_r2": 0.955684,
+    "ensemble_weight": 0.1,
+    "lgb_params": {
+      "num_leaves": 417,
+      "learning_rate": 0.00872016971319455,
+      "min_child_samples": 41,
+      "subsample": 0.5797654491534234,
+      "colsample_bytree": 0.5065701578589041,
+      "reg_alpha": 0.3196742478921097,
+      "reg_lambda": 0.0040680598367018464,
+      "min_split_gain": 0.9960169893612135,
+      "n_estimators": 5000
+    },
+    "catboost_params": {
+      "iterations": 3000,
+      "learning_rate": 0.03,
+      "depth": 8,
+      "loss_function": "RMSE",
+      "random_seed": 42,
+      "verbose": 0,
+      "early_stopping_rounds": 150
+    },
+    "fold_scores_lgb": [
+      0.9257,
+      0.9242,
+      0.9263,
+      0.9236,
+      0.9263
+    ],
+    "fold_scores_cat": [
+      0.956,
+      0.9563,
+      0.957,
+      0.9526,
+      0.9562
+    ],
+    "use_log1p": false,
+    "notes": "Optuna-tuned LGB + CatBoost ensemble, no MIGA, simple imputation. OOF geo\u00d7time_slot + gh5\u00d7time_slot + geo_day_trend."
+  },
+  {
+    "timestamp": "2026-05-28 16:40",
+    "oof_r2": 0.960375,
+    "competition_score": 96.0375,
+    "lb_score": 91.44756,
+    "model": "LGB+CatBoost ensemble (no MIGA)",
+    "lgb_oof_r2": 0.954371,
+    "cat_oof_r2": 0.958126,
+    "ensemble_weight": 0.4,
+    "lgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "num_leaves": 127,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1
+    },
+    "catboost_params": {
+      "iterations": 8000,
+      "learning_rate": 0.03,
+      "depth": 8,
+      "loss_function": "RMSE",
+      "random_seed": 42,
+      "verbose": 0,
+      "early_stopping_rounds": 200
+    },
+    "fold_scores_lgb": [
+      0.9537,
+      0.9529,
+      0.9564,
+      0.9525,
+      0.9563
+    ],
+    "fold_scores_cat": [
+      0.9585,
+      0.9587,
+      0.9593,
+      0.9547,
+      0.9592
+    ],
+    "use_log1p": false,
+    "notes": "Optuna-tuned LGB + CatBoost ensemble, no MIGA, simple imputation. OOF geo\u00d7time_slot + gh5\u00d7time_slot + geo_day_trend."
+  },
+  {
+    "timestamp": "2026-05-28 18:09",
+    "oof_r2": 0.96045,
+    "competition_score": 96.045,
+    "lb_score": 91.28172,
+    "model": "LGB+CatBoost ensemble (no MIGA)",
+    "lgb_oof_r2": 0.954371,
+    "cat_oof_r2": 0.958104,
+    "ensemble_weight": 0.4,
+    "lgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "num_leaves": 127,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1
+    },
+    "catboost_params": {
+      "iterations": 8000,
+      "learning_rate": 0.06618731862838642,
+      "depth": 9,
+      "l2_leaf_reg": 1.6578965137082393,
+      "min_data_in_leaf": 4,
+      "subsample": 0.924824173567208,
+      "colsample_bylevel": 0.8480246667851135,
+      "loss_function": "RMSE",
+      "random_seed": 42,
+      "verbose": 0,
+      "early_stopping_rounds": 300
+    },
+    "fold_scores_lgb": [
+      0.9537,
+      0.9529,
+      0.9564,
+      0.9525,
+      0.9563
+    ],
+    "fold_scores_cat": [
+      0.9585,
+      0.9584,
+      0.9593,
+      0.9548,
+      0.9594
+    ],
+    "use_log1p": false,
+    "notes": "Optuna-tuned CatBoost (depth=9, lr=0.066, l2=1.66, 25-trial search on full 5-fold CV) + proven LGB. OOF geo\u00d7time_slot + gh5\u00d7time_slot + geo_day_trend."
+  },
+  {
+    "timestamp": "2026-05-28 19:02",
+    "oof_r2": 0.960451,
+    "competition_score": 96.0451,
+    "lb_score": 91.46697,
+    "model": "LGB+XGB+CatBoost ensemble (no MIGA)",
+    "lgb_oof_r2": 0.954371,
+    "xgb_oof_r2": 0.954188,
+    "cat_oof_r2": 0.958126,
+    "lgb_weight": 0.25,
+    "xgb_weight": 0.15,
+    "cat_weight": 0.6,
+    "lgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "num_leaves": 127,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1
+    },
+    "xgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "max_depth": 6,
+      "min_child_weight": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1,
+      "early_stopping_rounds": 150
+    },
+    "catboost_params": {
+      "iterations": 8000,
+      "learning_rate": 0.03,
+      "depth": 8,
+      "loss_function": "RMSE",
+      "random_seed": 42,
+      "verbose": 0,
+      "early_stopping_rounds": 200
+    },
+    "fold_scores_lgb": [
+      0.9537,
+      0.9529,
+      0.9564,
+      0.9525,
+      0.9563
+    ],
+    "fold_scores_xgb": [
+      0.9537,
+      0.9537,
+      0.957,
+      0.9521,
+      0.9543
+    ],
+    "fold_scores_cat": [
+      0.9585,
+      0.9587,
+      0.9593,
+      0.9547,
+      0.9592
+    ],
+    "use_log1p": false,
+    "notes": "3-model ensemble: LGB (OOF encodings) + XGBoost (OOF encodings) + CatBoost (OTS). OOF geo\u00d7time_slot + gh5\u00d7time_slot + geo_day_trend."
+  },
+  {
+    "timestamp": "2026-05-28 22:03",
+    "oof_r2": 0.960102,
+    "competition_score": 96.0102,
+    "lb_score": null,
+    "model": "LGB+XGB+CatBoost ensemble (no MIGA)",
+    "lgb_oof_r2": 0.953966,
+    "xgb_oof_r2": 0.954052,
+    "cat_oof_r2": 0.958006,
+    "lgb_weight": 0.25,
+    "xgb_weight": 0.15,
+    "cat_weight": 0.6,
+    "lgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "num_leaves": 127,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1
+    },
+    "xgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "max_depth": 6,
+      "min_child_weight": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1,
+      "early_stopping_rounds": 150
+    },
+    "catboost_params": {
+      "iterations": 8000,
+      "learning_rate": 0.03,
+      "depth": 8,
+      "loss_function": "RMSE",
+      "random_seed": 42,
+      "verbose": 0,
+      "early_stopping_rounds": 200
+    },
+    "fold_scores_lgb": [
+      0.9538,
+      0.952,
+      0.9559,
+      0.9526,
+      0.9554
+    ],
+    "fold_scores_xgb": [
+      0.9537,
+      0.9538,
+      0.9567,
+      0.9519,
+      0.954
+    ],
+    "fold_scores_cat": [
+      0.9586,
+      0.9583,
+      0.9592,
+      0.9545,
+      0.9592
+    ],
+    "use_log1p": true,
+    "notes": "3-model ensemble: LGB (OOF encodings) + XGBoost (OOF encodings) + CatBoost (OTS). OOF geo\u00d7time_slot + gh5\u00d7time_slot + geo_day_trend."
+  },
+  {
+    "timestamp": "2026-05-28 22:35",
+    "oof_r2": 0.960451,
+    "competition_score": 96.0451,
+    "lb_score": null,
+    "model": "LGB+XGB+CatBoost ensemble (no MIGA)",
+    "lgb_oof_r2": 0.954371,
+    "xgb_oof_r2": 0.954188,
+    "cat_oof_r2": 0.958126,
+    "lgb_weight": 0.25,
+    "xgb_weight": 0.15,
+    "cat_weight": 0.6,
+    "lgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "num_leaves": 127,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1
+    },
+    "xgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "max_depth": 6,
+      "min_child_weight": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1,
+      "early_stopping_rounds": 150
+    },
+    "catboost_params": {
+      "iterations": 8000,
+      "learning_rate": 0.03,
+      "depth": 8,
+      "loss_function": "RMSE",
+      "random_seed": 42,
+      "verbose": 0,
+      "early_stopping_rounds": 200
+    },
+    "fold_scores_lgb": [
+      0.9537,
+      0.9529,
+      0.9564,
+      0.9525,
+      0.9563
+    ],
+    "fold_scores_xgb": [
+      0.9537,
+      0.9537,
+      0.957,
+      0.9521,
+      0.9543
+    ],
+    "fold_scores_cat": [
+      0.9585,
+      0.9587,
+      0.9593,
+      0.9547,
+      0.9592
+    ],
+    "use_log1p": false,
+    "notes": "3-model ensemble: LGB (OOF encodings) + XGBoost (OOF encodings) + CatBoost (OTS). OOF geo\u00d7time_slot + gh5\u00d7time_slot + geo_day_trend."
+  },
+  {
+    "timestamp": "2026-05-28 22:xx",
+    "oof_r2": null,
+    "lb_score": 91.50709,
+    "model": "LGB+XGB+CatBoost pseudo-labeled ensemble",
+    "base_run": "Run 7 (91.46697) predictions used as pseudo-labels",
+    "pseudo_iters": {
+      "lgb": 2000,
+      "xgb": 2000,
+      "catboost": 6000
+    },
+    "extended_train_size": 119077,
+    "blend_weights": {
+      "lgb": 0.25,
+      "xgb": 0.15,
+      "catboost": 0.6
+    },
+    "prediction_shift": {
+      "mean": -9e-05,
+      "std": 0.00397,
+      "max": 0.04899,
+      "min": -0.04304
+    },
+    "notes": "Pseudo-labeling: test predictions used as labels, retrained on train+test (119k rows). Daytime distribution now seen during training."
+  },
+  {
+    "timestamp": "2026-05-28 23:50",
+    "oof_r2": 0.960451,
+    "competition_score": 96.0451,
+    "lb_score": null,
+    "model": "LGB+XGB+CatBoost ensemble (no MIGA)",
+    "lgb_oof_r2": 0.954371,
+    "xgb_oof_r2": 0.954188,
+    "cat_oof_r2": 0.958126,
+    "lgb_weight": 0.25,
+    "xgb_weight": 0.15,
+    "cat_weight": 0.6,
+    "lgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "num_leaves": 127,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1
+    },
+    "xgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "max_depth": 6,
+      "min_child_weight": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1,
+      "early_stopping_rounds": 150
+    },
+    "catboost_params": {
+      "iterations": 8000,
+      "learning_rate": 0.03,
+      "depth": 8,
+      "loss_function": "RMSE",
+      "random_seed": 42,
+      "verbose": 0,
+      "early_stopping_rounds": 200
+    },
+    "fold_scores_lgb": [
+      0.9537,
+      0.9529,
+      0.9564,
+      0.9525,
+      0.9563
+    ],
+    "fold_scores_xgb": [
+      0.9537,
+      0.9537,
+      0.957,
+      0.9521,
+      0.9543
+    ],
+    "fold_scores_cat": [
+      0.9585,
+      0.9587,
+      0.9593,
+      0.9547,
+      0.9592
+    ],
+    "use_log1p": false,
+    "notes": "3-model ensemble: LGB (OOF encodings) + XGBoost (OOF encodings) + CatBoost (OTS). OOF geo\u00d7time_slot + gh5\u00d7time_slot + geo_day_trend."
+  },
+  {
+    "timestamp": "2026-05-29 00:13",
+    "oof_r2": 0.960645,
+    "competition_score": 96.0645,
+    "lb_score": 91.5,
+    "model": "LGB+XGB+CatBoost ensemble (no MIGA)",
+    "lgb_oof_r2": 0.954016,
+    "xgb_oof_r2": 0.954338,
+    "cat_oof_r2": 0.95868,
+    "lgb_weight": 0.2,
+    "xgb_weight": 0.15,
+    "cat_weight": 0.65,
+    "lgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "num_leaves": 127,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1
+    },
+    "xgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "max_depth": 6,
+      "min_child_weight": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1,
+      "early_stopping_rounds": 150
+    },
+    "catboost_params": {
+      "iterations": 8000,
+      "learning_rate": 0.03,
+      "depth": 8,
+      "loss_function": "RMSE",
+      "random_seed": 42,
+      "verbose": 0,
+      "early_stopping_rounds": 200
+    },
+    "fold_scores_lgb": [
+      0.9526,
+      0.953,
+      0.9563,
+      0.9523,
+      0.9558
+    ],
+    "fold_scores_xgb": [
+      0.9538,
+      0.9542,
+      0.957,
+      0.9522,
+      0.9543
+    ],
+    "fold_scores_cat": [
+      0.9591,
+      0.9589,
+      0.9601,
+      0.9548,
+      0.9603
+    ],
+    "use_log1p": false,
+    "notes": "3-model ensemble + neighbor_demand_mean feature (8 spatial geohash neighbors avg demand). Weights: LGB=0.20, XGB=0.15, CatBoost=0.65. LB=91.500 (neighbor alone hurt vs 91.538 best at time)."
+  },
+  {
+    "timestamp": "2026-05-29 01:xx",
+    "oof_r2": null,
+    "lb_score": 91.49321,
+    "model": "Multi-seed ensemble v1 (seeds 42+123+999, no neighbor feature)",
+    "seeds": [
+      42,
+      123,
+      999
+    ],
+    "notes": "Average of 3 seeds (no neighbor feature). Each seed: LGB\u00d70.25+XGB\u00d70.15+CatBoost\u00d70.60. Variance reduction vs single seed. LB slightly below pseudo-label result (91.507)."
+  },
+  {
+    "timestamp": "2026-05-29 02:xx",
+    "oof_r2": null,
+    "lb_score": 91.51298,
+    "model": "Multi-seed v1 + pseudo-label Round 1",
+    "seeds": [
+      42,
+      123,
+      999
+    ],
+    "notes": "Multi-seed v1 predictions used as pseudo-labels. Retrain LGB(2000)+XGB(2000)+CatBoost(6000) on 119k rows. Blend LGB=0.25/XGB=0.15/CAT=0.60."
+  },
+  {
+    "timestamp": "2026-05-29 03:xx",
+    "oof_r2": null,
+    "lb_score": 91.53782,
+    "model": "Neighbor feature + pseudo-label Round 1",
+    "notes": "submission_v2.csv (neighbor feature, 91.500) used as pseudo-labels. Retrain on 119k rows. Neighbor feature + pseudo-labeling together beat either alone."
+  },
+  {
+    "timestamp": "2026-05-29 04:xx",
+    "oof_r2": null,
+    "lb_score": 91.53669,
+    "model": "Neighbor feature + pseudo-label Round 2",
+    "notes": "Round 2 on 91.538 base. Consistent pattern: Round 2 always regresses slightly. Pseudo-label Round 1 is always the optimal stopping point."
+  },
+  {
+    "timestamp": "2026-05-29 05:xx",
+    "oof_r2": 0.9606,
+    "lb_score": 91.57984,
+    "model": "Neighbor feature + multi-seed v2 (seeds 42+123+999) + pseudo-label Round 1",
+    "seeds": [
+      42,
+      123,
+      999
+    ],
+    "blend_weights": {
+      "lgb": 0.2,
+      "xgb": 0.15,
+      "catboost": 0.65
+    },
+    "pseudo_iters": {
+      "lgb": 2000,
+      "xgb": 2000,
+      "catboost": 6000
+    },
+    "extended_train_size": 119077,
+    "notes": "CURRENT BEST. All three improvements stacked: neighbor_demand_mean feature + 3-seed averaging (lower variance pseudo-labels) + pseudo-label retraining. Largest single gain: +0.042 over previous best (91.538). Files: submission_best_91580.csv, preds_seed42/123/999.npy (with neighbor feature)."
+  },
+  {
+    "timestamp": "2026-05-29 12:31",
+    "oof_r2": 0.960645,
+    "competition_score": 96.0645,
+    "lb_score": null,
+    "model": "LGB+XGB+CatBoost ensemble (no MIGA)",
+    "lgb_oof_r2": 0.954016,
+    "xgb_oof_r2": 0.954338,
+    "cat_oof_r2": 0.95868,
+    "lgb_weight": 0.2,
+    "xgb_weight": 0.15,
+    "cat_weight": 0.65,
+    "lgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "num_leaves": 127,
+      "min_child_samples": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1
+    },
+    "xgb_params": {
+      "n_estimators": 3000,
+      "learning_rate": 0.02,
+      "max_depth": 6,
+      "min_child_weight": 20,
+      "subsample": 0.8,
+      "colsample_bytree": 0.8,
+      "reg_alpha": 0.1,
+      "reg_lambda": 0.1,
+      "early_stopping_rounds": 150
+    },
+    "catboost_params": {
+      "iterations": 8000,
+      "learning_rate": 0.03,
+      "depth": 8,
+      "loss_function": "RMSE",
+      "random_seed": 42,
+      "verbose": 0,
+      "early_stopping_rounds": 200
+    },
+    "fold_scores_lgb": [
+      0.9526,
+      0.953,
+      0.9563,
+      0.9523,
+      0.9558
+    ],
+    "fold_scores_xgb": [
+      0.9538,
+      0.9542,
+      0.957,
+      0.9522,
+      0.9543
+    ],
+    "fold_scores_cat": [
+      0.9591,
+      0.9589,
+      0.9601,
+      0.9548,
+      0.9603
+    ],
+    "use_log1p": false,
+    "notes": "3-model ensemble: LGB (OOF encodings) + XGBoost (OOF encodings) + CatBoost (OTS). OOF geo\u00d7time_slot + gh5\u00d7time_slot + geo_day_trend."
+  }
+]
