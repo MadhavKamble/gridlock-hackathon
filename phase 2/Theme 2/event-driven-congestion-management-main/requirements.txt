@@ -1,0 +1,16 @@
+pandas>=2.2,<3
+numpy>=1.26,<3
+scikit-learn>=1.4,<2
+xgboost>=2,<4
+osmnx>=1.9,<3
+networkx>=3.3,<4
+geopandas>=0.14,<2
+shapely>=2,<3
+pyproj>=3.6,<4
+ortools>=9.10,<10
+mlflow>=3,<4
+streamlit>=1.35,<2
+folium>=0.16,<1
+streamlit-folium>=0.20,<1
+joblib>=1.4,<2
+pytest>=8,<9

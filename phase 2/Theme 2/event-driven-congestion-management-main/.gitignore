@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local virtual environments
+venv/
+.venv/
+env/
+
+# OS/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Runtime logs/state
+*.log
+output/runtime/
+output/dashboards/
+output/predictions/
+
+# Local MLflow state
+mlruns/
+mlflow.db
+mlruns_fallback.jsonl
+
+# OSMnx/network caches
+cache/
+
+# Generated model/network/training artifacts
+models/*.pkl
+models/*.joblib
+models/duration_metrics.json
+road_network/*.graphml
+data/train_data.csv
+data/outcomes.jsonl
+
+# Keep optional sample/raw CSVs intentionally if present.
+!data/cleaned_gridlock.csv
