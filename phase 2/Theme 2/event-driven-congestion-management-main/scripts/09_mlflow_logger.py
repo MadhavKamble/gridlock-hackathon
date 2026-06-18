@@ -19,13 +19,24 @@ from lib.paths import MODEL_DIR, PREDICTIONS_DIR, ROOT, ensure_directories
 LOGGER = get_logger("mlflow_logger")
 
 
+def _count_outcomes() -> int:
+    """Number of operator-logged outcomes available for the learning loop."""
+    outcomes_path = ROOT / "data" / "outcomes.jsonl"
+    if not outcomes_path.exists():
+        return 0
+    with outcomes_path.open(encoding="utf-8") as handle:
+        return sum(1 for line in handle if line.strip())
+
+
 def log_latest(metrics_path: Path, prediction_path: Path, model_path: Path) -> None:
+    logged_outcomes = _count_outcomes()
     if mlflow is None:
         run_log = ROOT / "mlruns_fallback.jsonl"
         payload = {
             "metrics": _read_json(metrics_path) if metrics_path.exists() else {},
             "prediction": _read_json(prediction_path) if prediction_path.exists() else {},
             "model_path": str(model_path) if model_path.exists() else None,
+            "logged_outcomes": logged_outcomes,
         }
         with run_log.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(payload) + "\n")
@@ -47,9 +58,15 @@ def log_latest(metrics_path: Path, prediction_path: Path, model_path: Path) -> N
                 mlflow.log_metric(key, float(value))
             else:
                 mlflow.log_param(key, str(value))
+        # Surface the learning loop: how many real outcomes have been collected so far.
+        mlflow.log_metric("logged_outcomes", float(logged_outcomes))
         if model_path.exists():
             mlflow.log_artifact(model_path)
-    LOGGER.info("Logged latest run to MLflow SQLite store at %s", database_path)
+    LOGGER.info(
+        "Logged latest run to MLflow SQLite store at %s (%d outcomes collected)",
+        database_path,
+        logged_outcomes,
+    )
 
 
 def retrain_if_needed(threshold_mae: float, metrics_path: Path) -> bool:
@@ -58,7 +75,7 @@ def retrain_if_needed(threshold_mae: float, metrics_path: Path) -> bool:
     should_retrain = mae > threshold_mae
     if should_retrain:
         LOGGER.info("MAE %.2f exceeds threshold %.2f; retraining.", mae, threshold_mae)
-        subprocess.run([sys.executable, str(ROOT / "scripts" / "01_prepare_data.py"), "--input", str(ROOT.parent / "cleaned_gridlock.csv")], check=True)
+        subprocess.run([sys.executable, str(ROOT / "scripts" / "01_prepare_data.py"), "--input", str(ROOT / "data" / "cleaned_gridlock.csv")], check=True)
         subprocess.run([sys.executable, str(ROOT / "scripts" / "03_train_duration_model.py")], check=True)
     else:
         LOGGER.info("MAE %.2f is within threshold %.2f; no retraining needed.", mae, threshold_mae)

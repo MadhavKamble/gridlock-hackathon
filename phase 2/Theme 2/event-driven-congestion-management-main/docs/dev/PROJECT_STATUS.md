@@ -1,7 +1,7 @@
 # Project Status — Event-Driven Congestion Management
 
 **Theme 2 — Flipkart Gridlock 2.0 (Phase 2)**
-Last updated: 2026-06-18 · Status: **Working end-to-end, submission-prep in progress**
+Last updated: 2026-06-18 · Status: **Working end-to-end; all P0–P2 roadmap items (R1–R9) complete**
 
 > This is the single source of truth for "where the project stands today."
 > For planned work see [ROADMAP.md](ROADMAP.md), for change history see [CHANGELOG.md](CHANGELOG.md),
@@ -62,13 +62,14 @@ complete operational response, surfaced through a Streamlit operator UI.
 
 ## 4. Known limitations & risks
 
-| # | Item | Severity | Notes |
-|---|------|----------|-------|
-| L1 | **"Duration model" is decorative** | High (framing risk) | Dataset has no event-end timestamp, so the model learns `report_creation_delay_min` (delay between event start and report creation), **not congestion duration**. Metrics: MAE 1.32, RMSE 2.91, **R² ≈ 0**. Real duration comes from the rule-based `estimate_operational_impact`. This is honest in code but must be framed proactively to judges — see [DECISIONS.md](DECISIONS.md) D1. |
-| L2 | `run_all.sh` data path broken | Medium | Uses `../cleaned_gridlock.csv` (does not exist); real path is `data/cleaned_gridlock.csv`. README Quick Start fails out-of-box. Streamlit bootstrap works because it searches `data/` first. |
-| L3 | `pytest` missing from requirements | Low | Tests depend on it; not declared. |
-| L4 | `runtime.txt` pins 3.10.14 | Low | Verified working on 3.13; align before deploy. |
-| L5 | Efficiency hot spots on 155k-node graph | Low | `set(intersections)` rebuilt per node (05:31); `node_lookup` 155k-dict rebuilt repeatedly (07); possibly-unused `_coerce_node` linear scan (04:228). |
+| # | Item | Severity | Status |
+|---|------|----------|--------|
+| L1 | **"Duration model" is decorative** | High (framing risk) | **Mitigated (R3).** Dataset has no event-end timestamp, so the model learns `report_creation_delay_min`, **not congestion duration** (MAE 1.32, R² ≈ 0); real duration comes from the rule-based `estimate_operational_impact`. Now owned explicitly via the README "Modeling Approach & Data Limitation" section + rehearsed answer in [DECISIONS.md](DECISIONS.md) D1. |
+| L2 | `run_all.sh` data path broken | Medium | ✅ **Fixed (R1)** — now `data/cleaned_gridlock.csv`; clean clone runs end-to-end. |
+| L3 | `pytest` missing from requirements | Low | ✅ **Fixed (R2)** — declared `pytest>=8,<9`. |
+| L4 | `runtime.txt` pins 3.10.14 | Low | ✅ **Fixed (R5)** — pinned to verified `python-3.13.13`. |
+| L5 | Efficiency hot spots on 155k-node graph | Low | ✅ **Fixed (R4)** — set hoisted (05), `node_lookup` built once (07), dead `_coerce_node` removed (04). |
+| L6 | Retrain hook bug + learning loop not closed | Medium | **Partly addressed (R9).** Fixed retrain's broken input path; surfaced `logged_outcomes` in MLflow. Remaining: `retrain_if_needed` doesn't yet consume `outcomes.jsonl` — documented in [LEARNING_LOOP.md](LEARNING_LOOP.md). |
 
 ---
 

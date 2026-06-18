@@ -55,17 +55,17 @@ Last updated: 2026-06-18 · Target: submission in ~2 days
 
 ## P2 — Nice to have (only if time remains)
 
-### ☐ R7. Quantify the operational risk estimator
+### ☑ R7. Quantify the operational risk estimator  — done 2026-06-18 (RISK_ESTIMATOR.md)
 - **What:** Sensitivity table showing how duration/radius/staffing respond to cause, priority,
   closure, peak-hour, and road context.
 - **Why:** Turns "hand-tuned rules" into "transparent, defensible policy." Strengthens R3.
 
-### ☐ R8. Calibrate / document the Bernoulli heuristic
+### ☑ R8. Calibrate / document the Bernoulli heuristic  — done 2026-06-18 (BERNOULLI_NOTES.md)
 - **What:** Note that `k, alpha, beta` are uncalibrated; show the pressure-field on the demo map as
   a differentiator and state the calibration path.
 - **Why:** It's our most memorable/novel idea — present it as deliberate, experimental, with a path forward.
 
-### ☐ R9. Surface the learning loop
+### ☑ R9. Surface the learning loop  — done 2026-06-18 (LEARNING_LOOP.md)
 - **What:** Show that logged outcomes (`data/outcomes.jsonl`) feed the MLflow retrain hook.
 - **Why:** Directly answers the problem statement's "no post-event learning system" gap.
 

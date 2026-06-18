@@ -20,6 +20,23 @@ roadmap item ([ROADMAP.md](ROADMAP.md)) or decision ([DECISIONS.md](DECISIONS.md
 - **Change:** Added `pytest>=8,<9`.
 - **Verified:** `pip install --dry-run -r requirements.txt` resolves pytest 8.4.2; `pytest` → 2 passed.
 
+### [Fixed/Added/Docs] Surface the post-event learning loop (R9)
+- **Fixed:** `09_mlflow_logger.py` `retrain_if_needed` pointed at a non-existent input path
+  (`ROOT.parent/cleaned_gridlock.csv` — same bug class as R1); corrected to `data/cleaned_gridlock.csv`
+  so the retrain hook can actually run.
+- **Added:** `_count_outcomes()` + a `logged_outcomes` MLflow metric (and fallback-log field) so the
+  number of operator-logged ground-truth outcomes is visible over time. Verified: stage 09 logs
+  "0 outcomes collected" on a fresh store.
+- **Docs:** `docs/dev/LEARNING_LOOP.md` — honest map of the loop: what's wired (outcome capture incl.
+  `actual_duration_min`, run tracking, retrain hook/cron) and the remaining gap (retrain doesn't yet
+  consume `outcomes.jsonl`), with the build steps to close it.
+
+### [Docs] Risk estimator reference & Bernoulli notes (R7, R8)
+- **R7:** `docs/dev/RISK_ESTIMATOR.md` — formula, full factor reference, and a **verified** sensitivity
+  table (computed by running `estimate_operational_impact`); framed as expert-set, uncalibrated defaults.
+- **R8:** `docs/dev/BERNOULLI_NOTES.md` — current `k/alpha/beta` values flagged as uncalibrated defaults,
+  with a concrete calibration path tied to logged outcomes.
+
 ### [Docs] Demo runbook (R6)
 - Added `docs/dev/DEMO_RUNBOOK.md`: timed ~2.5-min script mapped to the 11 Flipkart-office screenshots,
   pre-flight checklist, headline talking points, anticipated Q&A, and a screenshot/HTML fallback path.
