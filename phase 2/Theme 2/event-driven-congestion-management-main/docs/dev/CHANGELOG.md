@@ -26,6 +26,10 @@ roadmap item ([ROADMAP.md](ROADMAP.md)) or decision ([DECISIONS.md](DECISIONS.md
   (keep code, off by default; remove from the demo's core beat + headline points; mention only if asked).
 - Updated `DEMO_RUNBOOK.md` accordingly (core map walk = affected roads → police → barricade → direct
   bypass; learning loop replaces Bernoulli as headline differentiator). See [DECISIONS.md](DECISIONS.md) D5.
+- Trimmed the README to match: dropped Bernoulli from the core-value sentence; promoted the direct
+  diversion route in the walkthrough and folded the pressure-field screenshots into one clearly-optional
+  "Experimental Pressure Layer" beat; condensed the detailed section into an optional appendix that defers
+  to `docs/dev/BERNOULLI_NOTES.md`.
 
 ### [Added] Close the learning loop — train + consume outcomes (R10)
 - **What:** The post-event learning loop now genuinely learns from collected durations.

@@ -64,9 +64,10 @@ once outcome data accumulates.
 
 The problem statement asks to *quantify event impact in advance* and *recommend manpower, barricading,
 and diversion* — and flags the absence of a *post-event learning system*. Our value is in the
-operational reasoning (graph-based impact propagation, OR-Tools deployment, Bernoulli diversion) plus a
-working learning loop, **not** in a duration number dressed up as ML. Framing the estimator transparently
-and wiring the outcome loop is a more credible, more useful system than a black-box trained on a proxy label.
+operational reasoning (graph-based impact propagation, OR-Tools deployment, direct closure-bypass
+diversion) plus a working learning loop, **not** in a duration number dressed up as ML. Framing the
+estimator transparently and wiring the outcome loop is a more credible, more useful system than a
+black-box trained on a proxy label.
 
 ## Public Deployment
 
@@ -239,44 +240,32 @@ Police deployment points show where officers should be placed. Numbered blue cir
 
 The affected-roads layer shows road segments expected to experience direct slowdown. Red segments are high-impact roads. In this scenario, the event touches a connected through-road network, so the affected area extends beyond the immediate pin.
 
-### 9. Bernoulli Pressure Field
-
-![Bernoulli pressure field near Flipkart office](docs/assets/flipkart-office/09-bernoulli-pressure-field.png)
-
-The Bernoulli pressure field is an experimental planning layer. It colours roads by traffic tension rather than by recommended action. Green means low pressure; yellow/red means higher pressure. This layer helps compare where traffic stress may concentrate after the event.
-
-### 10. Bernoulli-Optimal Diversion Candidates
-
-![Bernoulli-optimal diversion candidates](docs/assets/flipkart-office/10-bernoulli-diversion-candidates.png)
-
-Dashed blue Bernoulli routes are pressure-release candidates. They are not automatic public instructions for every driver. They show lower-potential paths that may help traffic escape the affected area if congestion builds.
-
-### 11. Direct Diversion Route
+### 9. Direct Diversion Route (recommended)
 
 ![Direct diversion route around the affected area](docs/assets/flipkart-office/11-direct-diversion-route.png)
 
-The direct diversion route is the most operationally actionable route. It shows a practical bypass around the affected road/barricade using connected roads near the office area.
+The direct diversion route is the operationally actionable output of the diversion stage — a practical bypass around the affected road/barricade using connected roads near the office area.
 
-## Bernoulli-Tension Diversion
+### 10. Optional: Experimental Pressure Layer (not part of the core plan)
 
-The automatic diversion stage includes an experimental fluid-dynamics heuristic. Each road edge is treated as a flow channel with a Bernoulli-like potential:
+> Off by default. An experimental planning aside, kept for exploration only — see the appendix below.
 
-```text
-density = capacity_factor / predicted_speed
-P = alpha * min(density / capacity_norm, 1.0) + beta * delay_penalty
-E = 0.5 * k * predicted_speed^2 + P
-```
+![Bernoulli pressure field near Flipkart office](docs/assets/flipkart-office/09-bernoulli-pressure-field.png)
+![Bernoulli-optimal diversion candidates](docs/assets/flipkart-office/10-bernoulli-diversion-candidates.png)
 
-Where:
+The pressure field colours roads by traffic tension (green low → red high); the dashed blue routes are experimental "pressure-release" candidates, **not** recommended driver instructions. The recommended diversion remains the direct bypass above.
 
-- `P` is traffic pressure.
-- `E` is the route potential used by Dijkstra search.
-- `k` controls the kinetic term.
-- `alpha` controls density pressure.
-- `beta` controls delay penalty.
+## Appendix: Experimental Pressure-Field Diversion (optional)
 
-High-tension nodes are detected where a high-pressure edge touches a lower-pressure neighbour. The system then computes Bernoulli-optimal diversion routes from those nodes to major exit nodes using edge weight `E`. These routes are written to `auto_diversion_routes` in `output/predictions/diversion_routes.json` and displayed as dashed blue lines on the map. The pressure field is displayed as green/yellow/red road segments and can be toggled in Streamlit.
+> Not a core deliverable. Off by default in the UI. The recommended, actionable diversion is the direct
+> closure-bypass route; the pressure-field layer below is an exploratory add-on.
 
-This is an experimental traffic-fluid analogy, not a calibrated microscopic traffic-flow model. Tune `k`, `alpha`, and `beta` against real outcomes before operational use.
+The diversion stage can additionally compute an experimental fluid-dynamics heuristic that treats each
+road edge as a flow channel with a Bernoulli-like potential and routes "pressure-release" candidates away
+from high-tension nodes. The parameters (`k`, `alpha`, `beta`) are **uncalibrated defaults** — this is a
+traffic-fluid analogy, not a calibrated traffic-flow model. Full formula, current values, and the
+calibration path are documented in [`docs/dev/BERNOULLI_NOTES.md`](docs/dev/BERNOULLI_NOTES.md).
 
-SUMO integration is optional. SUMO is a microscopic traffic simulator with tools such as `netconvert`, `duarouter`, and Python/TraCI support. If local SUMO binaries and a SUMO network file exist under `config/sumo_config/bangalore.net.xml`, the diversion stage records SUMO capability; otherwise it falls back to the NetworkX Bernoulli simulation.
+SUMO integration is optional: if local SUMO binaries and a network file exist under
+`config/sumo_config/bangalore.net.xml`, the diversion stage records SUMO capability; otherwise it falls
+back to the NetworkX simulation.
