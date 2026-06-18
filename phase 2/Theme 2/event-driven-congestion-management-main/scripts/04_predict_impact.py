@@ -13,6 +13,7 @@ import pandas as pd
 sys.path.append(str(Path(__file__).resolve().parents[1]))
 from lib.data_utils import EventInput, MODEL_FEATURES, event_to_frame
 from lib.logging_utils import get_logger
+from lib.outcome_model import blend_weight, load_outcome_model, predict_outcome_duration
 from lib.network_utils import edge_record, haversine_m, load_graph, nearest_node, write_json
 from lib.paths import MODEL_DIR, NETWORK_DIR, PREDICTIONS_DIR, ensure_directories
 
@@ -244,7 +245,27 @@ def predict(event: EventInput, model_path: Path, graph_path: Path, output_path: 
     reporting_delay = float(max(model.predict(frame[MODEL_FEATURES])[0], 0.0))
     graph = load_graph(graph_path)
     road_context = analyze_road_context(graph, event)
-    duration, methodology = estimate_operational_impact(event, road_context)
+    estimator_duration, methodology = estimate_operational_impact(event, road_context)
+    duration = estimator_duration
+    # Learning loop: if a duration model trained from logged outcomes exists, blend it with the
+    # estimator, trusting the model more as outcomes accumulate (blend_weight). Estimator is the floor.
+    outcome_bundle = load_outcome_model()
+    if outcome_bundle is not None:
+        n_outcomes = int(outcome_bundle.get("n_outcomes", 0))
+        weight = blend_weight(n_outcomes)
+        if weight > 0:
+            learned_duration = predict_outcome_duration(outcome_bundle, event)
+            duration = round(min(max(weight * learned_duration + (1 - weight) * estimator_duration, 10.0), 480.0), 2)
+            methodology = {
+                **methodology,
+                "method": "learned_estimator_blend_v1",
+                "estimator_duration_min": round(estimator_duration, 2),
+                "learned_duration_min": round(learned_duration, 2),
+                "blend_weight": round(weight, 3),
+                "learned_n_outcomes": n_outcomes,
+                "range_min": round(duration * 0.7, 2),
+                "range_max": round(duration * 1.35, 2),
+            }
     edges = affected_edges(graph, event, duration, road_context)
     intersections = sorted({edge["u"] for edge in edges} | {edge["v"] for edge in edges})
     payload = {

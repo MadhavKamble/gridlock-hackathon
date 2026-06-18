@@ -39,7 +39,8 @@ complete operational response, surfaced through a Streamlit operator UI.
 | 06 | `06_barricade_simulator.py` | Scores 3 barricade plans (congestion / throughput / travel-time); CityFlow optional, graph engine default |
 | 07 | `07_diversion_routes.py` | Direct bypass routes + experimental **Bernoulli pressure-field** diversion candidates; SUMO optional |
 | 08 | `08_generate_dashboard.py` | Folium GeoJSON + `dashboard.html` |
-| 09 | `09_mlflow_logger.py` | Logs metrics/params/artifacts to MLflow SQLite; threshold-based retrain hook |
+| 09 | `09_mlflow_logger.py` | Logs metrics/params/artifacts to MLflow SQLite; threshold-based retrain hook; triggers stage 10 |
+| 10 | `10_train_from_outcomes.py` | Trains a real congestion-duration model from operator-logged outcomes (`actual_duration_min`); self-gates on outcome count; logged to MLflow. Consumed by stage 04 via a confidence-weighted blend. |
 
 **Operator-facing layer**
 - `app/main.py` — Streamlit app: map-click event entry, one-click response generation, plain-English
@@ -69,7 +70,7 @@ complete operational response, surfaced through a Streamlit operator UI.
 | L3 | `pytest` missing from requirements | Low | ✅ **Fixed (R2)** — declared `pytest>=8,<9`. |
 | L4 | `runtime.txt` pins 3.10.14 | Low | ✅ **Fixed (R5)** — pinned to verified `python-3.13.13`. |
 | L5 | Efficiency hot spots on 155k-node graph | Low | ✅ **Fixed (R4)** — set hoisted (05), `node_lookup` built once (07), dead `_coerce_node` removed (04). |
-| L6 | Retrain hook bug + learning loop not closed | Medium | **Partly addressed (R9).** Fixed retrain's broken input path; surfaced `logged_outcomes` in MLflow. Remaining: `retrain_if_needed` doesn't yet consume `outcomes.jsonl` — documented in [LEARNING_LOOP.md](LEARNING_LOOP.md). |
+| L6 | Retrain hook bug + learning loop not closed | Medium | ✅ **Resolved (R9 + R10).** Fixed retrain's broken input path; surfaced `logged_outcomes`; and **closed the loop** — `outcomes.jsonl` is now trained into a duration model (`lib/outcome_model.py`, stage 10) and consumed by stage 04 via a confidence-weighted blend. See [LEARNING_LOOP.md](LEARNING_LOOP.md). |
 
 ---
 

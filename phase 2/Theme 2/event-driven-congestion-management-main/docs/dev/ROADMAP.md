@@ -69,6 +69,14 @@ Last updated: 2026-06-18 · Target: submission in ~2 days
 - **What:** Show that logged outcomes (`data/outcomes.jsonl`) feed the MLflow retrain hook.
 - **Why:** Directly answers the problem statement's "no post-event learning system" gap.
 
+### ☑ R10. Close the learning loop (train + consume)  — done 2026-06-18
+- **What:** Actually train a congestion-duration model from `outcomes.jsonl` (`actual_duration_min`) and
+  consume it in `04_predict_impact` via a confidence-weighted blend with the estimator.
+- **Why:** Makes the post-event learning system real, not aspirational — the pitch can say "does" not "will."
+- **Done:** `lib/outcome_model.py` + `scripts/10_train_from_outcomes.py`; gated at 30 outcomes; stage 09
+  triggers it; unit tests added; verified with 150 synthetic outcomes and the 0-outcome no-op. See
+  [DECISIONS.md](DECISIONS.md) D4.
+
 ---
 
 ## Sequencing

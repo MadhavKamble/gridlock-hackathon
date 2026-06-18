@@ -55,6 +55,23 @@ records the context, the choice, why, and consequences. Newest decisions appende
   does" (the polished narrative). Easy to reference from PROJECT_STATUS.
 - **Consequences:** One place to look for project state; the public README stays focused on the demo.
 
+## D4. Close the learning loop with a confidence-weighted blend, estimator as floor
+
+- **Status:** Accepted (2026-06-18)
+- **Context:** `outcomes.jsonl` captures `actual_duration_min` — the real duration label the source data
+  lacks (D1). We chose to fully wire it in (train + consume), not just collect.
+- **Decision:** Train an XGBoost duration model from outcomes, gated at `MIN_OUTCOMES=30`; consume it in
+  `04_predict_impact` as `duration = w·learned + (1−w)·estimator` with `w = min(1, n/200)`.
+- **Why:**
+  - A hard switch from estimator → model at an arbitrary count would be brittle and dishonest with few
+    samples. Linear confidence weighting degrades gracefully: rules dominate early, the model takes over
+    as evidence grows.
+  - Keeps the transparent estimator as a floor/fallback, so the system never depends on a thinly-trained
+    model. The prediction records both components + the weight for full auditability.
+- **Consequences:** New `lib/outcome_model.py` + `scripts/10_train_from_outcomes.py`; stage 09 triggers
+  stage 10; stage 04 gained an optional dependency on the outcome model (no-op when absent). Verified with
+  150 synthetic outcomes (blend weight 0.75) and the 0-outcome no-op path; unit tests added.
+
 ---
 
 ## Template

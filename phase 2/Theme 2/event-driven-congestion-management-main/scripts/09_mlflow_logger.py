@@ -79,6 +79,9 @@ def retrain_if_needed(threshold_mae: float, metrics_path: Path) -> bool:
         subprocess.run([sys.executable, str(ROOT / "scripts" / "03_train_duration_model.py")], check=True)
     else:
         LOGGER.info("MAE %.2f is within threshold %.2f; no retraining needed.", mae, threshold_mae)
+    # Always attempt to (re)train the learned duration model from logged outcomes; it self-gates on
+    # the number of available outcomes and is a no-op until enough have accumulated.
+    subprocess.run([sys.executable, str(ROOT / "scripts" / "10_train_from_outcomes.py")], check=True)
     return should_retrain
 
 

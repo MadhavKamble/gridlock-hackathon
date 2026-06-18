@@ -20,6 +20,25 @@ roadmap item ([ROADMAP.md](ROADMAP.md)) or decision ([DECISIONS.md](DECISIONS.md
 - **Change:** Added `pytest>=8,<9`.
 - **Verified:** `pip install --dry-run -r requirements.txt` resolves pytest 8.4.2; `pytest` → 2 passed.
 
+### [Added] Close the learning loop — train + consume outcomes (R10)
+- **What:** The post-event learning loop now genuinely learns from collected durations.
+  - `lib/outcome_model.py` — builds a labeled set from `outcomes.jsonl` (`actual_duration_min` + event
+    features via `event_to_frame`), trains an XGBoost duration model gated at `MIN_OUTCOMES=30`
+    (held-out split at ≥4×), with `blend_weight(n) = min(1, n/200)`.
+  - `scripts/10_train_from_outcomes.py` — CLI trainer; logs the model + metrics to MLflow.
+  - `09_mlflow_logger.py` — `retrain-if-needed` now also triggers stage 10 (self-gating no-op until
+    enough outcomes).
+  - `04_predict_impact.py` — loads the learned model when present and blends:
+    `duration = w·learned + (1−w)·estimator`; records `method = learned_estimator_blend_v1` with both
+    components, the weight, and `n_outcomes`.
+  - `tests/test_outcome_model.py` — covers blend-weight gating/ramp, training-frame filtering, and the
+    insufficient-outcomes gate.
+- **Why:** Makes the loop real (train + consume), not just collect/surface. Estimator stays as the
+  transparent floor. See [DECISIONS.md](DECISIONS.md) D4 and [LEARNING_LOOP.md](LEARNING_LOOP.md).
+- **Verified:** Seeded 150 synthetic outcomes → model trained (blend weight 0.75), stage 04 emitted
+  `learned_estimator_blend_v1`; 0-outcome path is a clean no-op (pure estimator). Synthetic data removed
+  after testing (gitignored). Full test suite: 5 passed.
+
 ### [Fixed/Added/Docs] Surface the post-event learning loop (R9)
 - **Fixed:** `09_mlflow_logger.py` `retrain_if_needed` pointed at a non-existent input path
   (`ROOT.parent/cleaned_gridlock.csv` — same bug class as R1); corrected to `data/cleaned_gridlock.csv`

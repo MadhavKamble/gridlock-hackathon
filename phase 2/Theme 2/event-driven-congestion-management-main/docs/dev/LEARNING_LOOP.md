@@ -32,19 +32,32 @@ ours works, what is wired today, and the one connection that still needs buildin
 - **Automated retrain hook + scheduling.** `--mode retrain-if-needed` retrains when MAE exceeds a
   threshold; the README documents cron entries for periodic logging/retraining.
 
-## The honest gap ⚠️ (next build step)
+## The loop is now closed ✅
 
-`retrain_if_needed` currently re-trains on the **static** `cleaned_gridlock.csv` (the reporting-delay
-target), driven by an MAE threshold — it does **not yet consume `outcomes.jsonl`**. So today the loop
-*collects* ground truth and *surfaces* progress, but the retrain step doesn't yet *learn from* the
-collected durations. Closing that wire is the path from "reporting-delay model" to a real
-"congestion-duration model":
+`outcomes.jsonl` is consumed end-to-end (`lib/outcome_model.py`, `scripts/10_train_from_outcomes.py`):
 
-1. Join `outcomes.jsonl` (`actual_duration_min` + event features from the stored prediction) into a
-   labeled training set.
-2. Once enough labeled events accumulate, train a duration model on that real target and register it in MLflow.
-3. Either replace the operational risk estimator or use it as a prior, and recalibrate the
-   Bernoulli parameters against observed relief (see [BERNOULLI_NOTES.md](BERNOULLI_NOTES.md)).
+1. **Build labeled set** — `build_training_frame` joins each outcome's `actual_duration_min` (the real
+   target) with the stored event features (reusing `event_to_frame`, so features match the live path).
+2. **Gated training** — `train_outcome_model` trains an `XGBRegressor` on that real duration target only
+   when `n_outcomes >= MIN_OUTCOMES` (30); below that it's a no-op (avoids training on noise). A held-out
+   split kicks in once `n >= 4×MIN_OUTCOMES`. The model + metrics are saved and logged to MLflow.
+3. **Consumption with confidence weighting** — `04_predict_impact` loads the learned model when present
+   and blends it with the estimator: `duration = w·learned + (1−w)·estimator`, where
+   `w = blend_weight(n) = min(1, n / 200)`. So early on the transparent estimator dominates; as outcomes
+   accumulate, the learned model takes over. The prediction records `method = learned_estimator_blend_v1`
+   with both components, the weight, and `n_outcomes` for full transparency.
+4. **Trigger** — `09_mlflow_logger.py --mode retrain-if-needed` runs stage 10 every time, so the model
+   refreshes as outcomes grow (cron-friendly).
+
+Verified by seeding 150 synthetic outcomes: model trained (blend weight 0.75), and `04` emitted
+`learned_estimator_blend_v1` blending estimator and learned durations; with 0 outcomes the path is a
+clean no-op (pure estimator). Synthetic data was removed after testing (`outcomes.jsonl` and the model
+file are gitignored).
+
+### Remaining refinements (genuine future work)
+- Recalibrate the operational risk estimator factors against the same outcomes (see [RISK_ESTIMATOR.md](RISK_ESTIMATOR.md)).
+- Recalibrate the Bernoulli `k/alpha/beta` against observed congestion relief (see [BERNOULLI_NOTES.md](BERNOULLI_NOTES.md)).
+- Per-corridor models once data volume per corridor is sufficient.
 
 ## Recent fix
 
@@ -54,7 +67,7 @@ actually runs. See [CHANGELOG.md](CHANGELOG.md) R9.
 
 ## Demo framing
 
-> "Operators log what actually happened — including the real duration the raw data never recorded. That
-> feeds MLflow, where you can watch the labeled-outcome count grow. The retrain hook and schedule are in
-> place; wiring those collected durations into a trained duration model is the deliberate next step, and
-> it's exactly the post-event learning system the brief says is missing."
+> "Operators log what actually happened — including the real duration the raw data never recorded. Once
+> enough outcomes accumulate, the system trains a duration model on that real target and blends it into
+> predictions, trusting it more as evidence grows — with the transparent estimator as the floor. That's a
+> live post-event learning system: it starts honest with rules and gets sharper with every logged event."

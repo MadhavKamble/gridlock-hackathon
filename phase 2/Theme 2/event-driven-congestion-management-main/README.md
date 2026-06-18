@@ -50,7 +50,7 @@ a label — and inventing one would produce a confident-looking but meaningless 
 |----------|----------|-----|
 | How long will impact last? | **Transparent operational risk estimator** (`estimate_operational_impact`) combining cause base-minutes × priority × closure × peak-hour × planned/unplanned × corridor × road-context factors | Every factor is inspectable and defensible by an operator; no fabricated label |
 | What *can* we learn from the timestamps? | An XGBoost model on `report_creation_delay_min` (start → first report), clearly labeled as such | Honest about what the data actually supports |
-| How do we get to a real duration model? | Log actual outcomes via the UI → `data/outcomes.jsonl` → MLflow retrain hook | Closes the "no post-event learning system" gap from the problem statement |
+| How do we get to a real duration model? | Log actual outcomes via the UI → `data/outcomes.jsonl` → **train a duration model on the real target** (`10_train_from_outcomes.py`) → blend into predictions as outcomes grow | Closes the "no post-event learning system" gap from the problem statement — implemented, not just planned (see `docs/dev/LEARNING_LOOP.md`) |
 
 ### Be clear about the reporting-delay model
 
@@ -151,7 +151,8 @@ Open `http://127.0.0.1:8765`. The monitor can start and stop the pipeline, displ
 - `06_barricade_simulator.py` uses CityFlow when importable and otherwise applies a graph-based congestion, throughput, and travel-time scorer across three plans.
 - `07_diversion_routes.py` removes selected closed edges and computes travel-time weighted alternative routes.
 - `08_generate_dashboard.py` writes GeoJSON and `dashboard.html` using Folium.
-- `09_mlflow_logger.py` logs metrics, parameters, artifacts, predictions, and supports threshold-based retraining.
+- `09_mlflow_logger.py` logs metrics, parameters, artifacts, predictions, supports threshold-based retraining, and triggers outcome-based training.
+- `10_train_from_outcomes.py` trains a congestion-duration model from operator-logged outcomes (`actual_duration_min`), self-gating on the number of outcomes; `04_predict_impact.py` blends it with the operational estimator, trusting it more as outcomes accumulate.
 
 ## CityFlow And Docker
 
