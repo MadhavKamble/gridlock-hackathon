@@ -72,6 +72,25 @@ records the context, the choice, why, and consequences. Newest decisions appende
   stage 10; stage 04 gained an optional dependency on the outcome model (no-op when absent). Verified with
   150 synthetic outcomes (blend weight 0.75) and the 0-outcome no-op path; unit tests added.
 
+## D5. Scope discipline against the problem statement (keep reporting model, bury Bernoulli)
+
+- **Status:** Accepted (2026-06-18)
+- **Context:** Audited every component against the problem statement's one cause — *forecast event impact;
+  recommend manpower, barricading, diversion; close the post-event learning gap*. Two components don't map
+  to the cause: (a) the reporting-delay model (stage 03 / `predicted_reporting_delay_min`, R²≈0, used in no
+  decision), and (b) the Bernoulli fluid-dynamics diversion (uncalibrated, additive on top of the direct
+  closure-bypass routes that already satisfy the diversion ask).
+- **Decision:**
+  - **Reporting-delay model — keep as-is.** Owner chose not to refactor it out this close to submission.
+    It stays documented honestly (D1, README "Modeling Approach"); it is **not** foregrounded in the pitch.
+  - **Bernoulli diversion — keep but bury.** Code stays (already off by default); removed from the demo
+    script's core beat and headline talking points; surfaced only if a judge asks, clearly labeled
+    experimental/optional. The recommended diversion is the direct closure-bypass route.
+- **Why:** Stay on-cause. The actionable, defensible deliverables lead; experimental/irrelevant pieces
+  neither get cut at risk near submission nor get promoted into questions we can't cleanly defend.
+- **Consequences:** No code change. `DEMO_RUNBOOK.md` updated to de-feature Bernoulli; this is the
+  authoritative pitch framing. README already labels Bernoulli experimental.
+
 ---
 
 ## Template

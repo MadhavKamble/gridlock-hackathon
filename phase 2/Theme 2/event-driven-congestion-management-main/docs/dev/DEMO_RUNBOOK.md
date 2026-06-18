@@ -50,12 +50,15 @@ Checklist:
 > segments, officers assigned vs held in reserve, the recommended barricade, and which diversions are
 > actionable vs experimental."
 
-**[1:35–2:10] Walk the map layers.** → `08`, `07`, `05`, `09`, `11`
+**[1:35–2:10] Walk the map layers.** → `08`, `07`, `05`, `11`
 - Affected roads (`08`) → police deployment (numbered, `07`) → recommended barricade (`05`) →
-  Bernoulli pressure field (`09`) → direct diversion route (`11`).
-> "Red = directly affected. Blue numbers = officers per junction from the optimizer. Dashed = barricaded.
-> The green/red layer is our Bernoulli **pressure field** — we treat each road as a flow channel and route
-> diversions away from high-tension nodes. The solid bypass is the actionable route."
+  direct diversion route (`11`).
+> "Red = directly affected roads. Blue numbers = officers per junction from the optimizer. Dashed =
+> barricaded segments. The solid blue route is the actionable bypass around the closure."
+
+> **Do not lead with the Bernoulli pressure layer.** It's an optional, experimental planning view (off by
+> default) and is not part of the core plan. Only show it if a judge specifically asks about additional
+> diversion analysis — see the Q&A.
 
 **[2:10–2:30] The learning loop + honesty close.** → mention `outcomes.jsonl` / MLflow
 > "Operators log the actual outcome, which feeds an MLflow retrain hook — the post-event learning system
@@ -68,11 +71,11 @@ Checklist:
 ## 2. Headline talking points (if time is cut short)
 
 1. **Real network, real data** — live Bengaluru OSM graph (155k nodes), 8,173 events.
-2. **All three asks delivered** — manpower (OR-Tools CP-SAT), barricades (simulated plans), diversions.
-3. **Differentiator** — Bernoulli pressure-field diversion (traffic-as-fluid heuristic).
+2. **All three asks delivered** — manpower (OR-Tools CP-SAT), barricades (simulated plans), diversions (closure bypass).
+3. **Closes the learning gap** — outcomes (real durations) train a duration model that sharpens the
+   forecast over time (stage 10); estimator is the transparent floor.
 4. **Operator-first** — plain-English summary, not a metrics dump.
-5. **Closes the learning gap** — outcome logging → MLflow retrain.
-6. **Honest modeling** — see the Q&A below; we own the data limitation.
+5. **Honest modeling** — see the Q&A below; we own the data limitation.
 
 ---
 
@@ -83,9 +86,10 @@ Checklist:
 > timestamp exists, so duration is a transparent estimator; we train only the honest target (reporting
 > delay) and log outcomes to enable a real model later.
 
-**Q: Is the Bernoulli diversion validated?**
-> It's an experimental, deliberately-labeled heuristic; `k, alpha, beta` are uncalibrated. We present it
-> as a differentiator with a clear calibration path against logged outcomes, not as a calibrated simulator.
+**Q: Is there other diversion analysis / what's that optional pressure layer?** *(only if asked)*
+> There's an optional, experimental pressure-field view (off by default), not part of the core plan. It's a
+> deliberately-labeled heuristic with uncalibrated parameters and a clear calibration path against logged
+> outcomes. The recommended, actionable diversion is the direct closure-bypass route.
 
 **Q: Does it use real-time data?**
 > The pipeline is built to accept a live event and recompute in seconds; today's inputs are the event

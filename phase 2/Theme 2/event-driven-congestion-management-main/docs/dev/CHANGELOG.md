@@ -20,6 +20,13 @@ roadmap item ([ROADMAP.md](ROADMAP.md)) or decision ([DECISIONS.md](DECISIONS.md
 - **Change:** Added `pytest>=8,<9`.
 - **Verified:** `pip install --dry-run -r requirements.txt` resolves pytest 8.4.2; `pytest` → 2 passed.
 
+### [Docs] Scope discipline — re-anchor on the problem statement (D5)
+- Audited components against the problem statement's single cause. Decision: keep the reporting-delay
+  model as-is (not foregrounded; too close to submission to refactor) and **bury** the Bernoulli diversion
+  (keep code, off by default; remove from the demo's core beat + headline points; mention only if asked).
+- Updated `DEMO_RUNBOOK.md` accordingly (core map walk = affected roads → police → barricade → direct
+  bypass; learning loop replaces Bernoulli as headline differentiator). See [DECISIONS.md](DECISIONS.md) D5.
+
 ### [Added] Close the learning loop — train + consume outcomes (R10)
 - **What:** The post-event learning loop now genuinely learns from collected durations.
   - `lib/outcome_model.py` — builds a labeled set from `outcomes.jsonl` (`actual_duration_min` + event
