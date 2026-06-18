@@ -28,7 +28,8 @@ def optimize(prediction_path: Path, graph_path: Path, output_path: Path, officer
     intersections = prediction.get("intersections", [])
     if not intersections:
         raise ValueError("Prediction contains no intersections to optimize.")
-    candidates = [node for node in graph.nodes if str(node) in set(intersections)]
+    intersection_set = set(intersections)
+    candidates = [node for node in graph.nodes if str(node) in intersection_set]
     event = prediction.get("event", {})
     affected = prediction.get("affected_edges", [])
     incident_count = {

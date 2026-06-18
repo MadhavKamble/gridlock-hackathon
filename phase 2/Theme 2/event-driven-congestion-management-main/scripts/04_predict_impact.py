@@ -226,13 +226,6 @@ def _predicted_edge_speed(edge: dict[str, Any], duration_min: float) -> float:
     return max(free_flow * min(impact_factor, duration_factor), 1.0)
 
 
-def _coerce_node(graph: Any, node: str) -> Any | None:
-    for candidate in graph.nodes:
-        if str(candidate) == str(node):
-            return candidate
-    return None
-
-
 def predict(event: EventInput, model_path: Path, graph_path: Path, output_path: Path) -> dict[str, Any]:
     if not model_path.exists():
         raise FileNotFoundError(f"Model not found: {model_path}. Run 03_train_duration_model.py first.")

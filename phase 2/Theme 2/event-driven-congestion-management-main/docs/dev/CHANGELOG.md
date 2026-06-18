@@ -20,6 +20,26 @@ roadmap item ([ROADMAP.md](ROADMAP.md)) or decision ([DECISIONS.md](DECISIONS.md
 - **Change:** Added `pytest>=8,<9`.
 - **Verified:** `pip install --dry-run -r requirements.txt` resolves pytest 8.4.2; `pytest` → 2 passed.
 
+### [Docs] Demo runbook (R6)
+- Added `docs/dev/DEMO_RUNBOOK.md`: timed ~2.5-min script mapped to the 11 Flipkart-office screenshots,
+  pre-flight checklist, headline talking points, anticipated Q&A, and a screenshot/HTML fallback path.
+
+### [Changed] Efficiency cleanups on the 155k-node graph (R4)
+- **Motivation:** Repeated O(N) work over the full Bengaluru graph (155,376 nodes) per event.
+- **Change:**
+  - `05_manpower_optimizer.py` — hoisted `set(intersections)` out of the per-node comprehension
+    (was rebuilt 155k times) into a single `intersection_set`.
+  - `07_diversion_routes.py` — build the `str->node` lookup once in `generate_routes` and pass it to
+    `_local_pressure_edges` and `_fallback_tension_nodes` (was rebuilt 3×, once per function).
+  - `04_predict_impact.py` — removed dead `_coerce_node` (defined, never called; full-node linear scan).
+- **Verified:** Stages 04/05/07 produce identical outputs (350 edges, 150 intersections, 12 officers,
+  2 manual + 8 Bernoulli routes); tests pass.
+
+### [Changed] Align `runtime.txt` with tested interpreter (R5)
+- **Problem:** `runtime.txt` pinned `python-3.10.14`, but the current dependency set was only verified on 3.13.
+- **Change:** Pinned `python-3.13.13` (matches the validated `.venv`; supported by Streamlit Cloud and Render).
+- **Note:** If a deploy target lacks 3.13, Python 3.11+ is a safe fallback.
+
 ### [Docs] Modeling approach & data limitation narrative (R3)
 - **Motivation:** Biggest scoring risk — the "duration model" is decorative (R²≈0 on a proxy target).
   Owning this proactively reads as rigor; letting a judge discover it undermines trust.

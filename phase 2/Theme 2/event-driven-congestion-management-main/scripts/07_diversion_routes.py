@@ -28,6 +28,8 @@ def generate_routes(prediction_path: Path, barricade_path: Path, graph_path: Pat
         if (str(u), str(v), str(k)) in closed_set:
             graph.remove_edge(u, v, k)
     routes = []
+    # graph and pressure_graph share the same nodes (only edges are removed), so a single
+    # str->node lookup serves every stage below.
     node_lookup = {str(node): node for node in graph.nodes}
     for index, closed_edge in enumerate(closed[:6], start=1):
         source = node_lookup.get(str(closed_edge["u"]))
@@ -52,7 +54,7 @@ def generate_routes(prediction_path: Path, barricade_path: Path, graph_path: Pat
             )
         except (nx.NetworkXNoPath, nx.NodeNotFound):
             continue
-    relevant_edges = _local_pressure_edges(pressure_graph, prediction, closed)
+    relevant_edges = _local_pressure_edges(pressure_graph, prediction, closed, node_lookup)
     field = pressure_features(pressure_graph, allowed_edges=relevant_edges, max_edges=350)
     pressure_threshold = _adaptive_pressure_threshold(field)
     tension_graph = pressure_graph.edge_subgraph(
@@ -64,7 +66,7 @@ def generate_routes(prediction_path: Path, barricade_path: Path, graph_path: Pat
     else:
         tension_nodes = detect_high_tension_nodes(tension_graph, pressure_threshold=pressure_threshold)
         if not tension_nodes:
-            tension_nodes = _fallback_tension_nodes(pressure_graph, field, limit=20)
+            tension_nodes = _fallback_tension_nodes(pressure_graph, field, limit=20, node_lookup=node_lookup)
         auto_routes = _auto_diversions(graph, tension_nodes, prediction, limit=8)
     payload = {
         "closed_edges_removed": len(closed),
@@ -101,10 +103,10 @@ def _local_pressure_edges(
     graph: nx.MultiDiGraph,
     prediction: dict[str, Any],
     closed: list[dict[str, Any]],
+    node_lookup: dict[str, Any],
 ) -> set[tuple[str, str, str]]:
     affected_keys = {(edge["u"], edge["v"], edge.get("key", "0")) for edge in prediction.get("affected_edges", [])}
     closed_keys = {(edge["u"], edge["v"], edge.get("key", "0")) for edge in closed}
-    node_lookup = {str(node): node for node in graph.nodes}
     local_nodes = set()
     for u, v, _ in affected_keys | closed_keys:
         if u in node_lookup:
@@ -134,8 +136,12 @@ def _adaptive_pressure_threshold(field: list[dict[str, Any]], default_threshold:
     return round(max(0.05, (min(elevated) + max(elevated)) / 2), 4)
 
 
-def _fallback_tension_nodes(graph: nx.MultiDiGraph, field: list[dict[str, Any]], limit: int) -> list[Any]:
-    node_lookup = {str(node): node for node in graph.nodes}
+def _fallback_tension_nodes(
+    graph: nx.MultiDiGraph,
+    field: list[dict[str, Any]],
+    limit: int,
+    node_lookup: dict[str, Any],
+) -> list[Any]:
     nodes: list[Any] = []
     for edge in sorted(field, key=lambda item: float(item.get("pressure", 0.0)), reverse=True):
         for endpoint in (edge.get("u"), edge.get("v")):

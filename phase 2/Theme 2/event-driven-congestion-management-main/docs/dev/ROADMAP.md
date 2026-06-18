@@ -34,18 +34,18 @@ Last updated: 2026-06-18 · Target: submission in ~2 days
 
 ## P1 — Strengthens the submission (do if P0 done)
 
-### ☐ R4. Efficiency cleanups on the 155k-node graph
+### ☑ R4. Efficiency cleanups on the 155k-node graph  — done 2026-06-18
 - **What:** Hoist `set(intersections)` out of the per-node loop (`05:31`); build `node_lookup` once
   and pass it through `07`; delete or justify unused `_coerce_node` (`04:228`).
 - **Why:** Faster, cleaner code; reduces per-event latency in the live demo. Low risk.
 - **Done when:** Pipeline runtime unchanged or better, all stages still produce identical artifacts.
 
-### ☐ R5. Align `runtime.txt` with the tested interpreter
+### ☑ R5. Align `runtime.txt` with the tested interpreter  — done 2026-06-18
 - **What:** Decide on 3.10 vs 3.13 and make `runtime.txt` + local venv consistent.
 - **Why:** Avoids a deploy-time surprise (Streamlit Cloud / Render read `runtime.txt`).
 - **Done when:** Documented target version; deploy config matches what we tested.
 
-### ☐ R6. Demo script & assets
+### ☑ R6. Demo script & assets  — done 2026-06-18 (see DEMO_RUNBOOK.md)
 - **What:** Rehearse the Flipkart-office walkthrough using the 11 existing screenshots; scripted
   2–3 min flow: enter event → live monitor → plain-English summary → map layers.
 - **Why:** Judges remember a concrete story over a feature list. Assets already exist; just sequence them.
